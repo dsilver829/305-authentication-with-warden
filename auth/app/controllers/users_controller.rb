@@ -1,15 +1,15 @@
 class UsersController < ApplicationController
   def new
-    @user = User.new
+    flash.now.alert = warden.message if warden.message.present?
   end
 
   def create
-    @user = User.new(params[:user])
-    if @user.save
-      session[:user_id] = @user.id
-      redirect_to root_url, notice: "Signed up!"
-    else
-      render "new"
-    end
+    warden.authenticate!
+    redirect_to root_url, notice: 'Logged in!'
+  end
+
+  def destroy
+    warden.logout
+    redirect_to root_url, notice: 'Logged out!'
   end
 end
